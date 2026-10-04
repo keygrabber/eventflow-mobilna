@@ -18,18 +18,15 @@ export function validateSimulationInput(input, context) {
   return errors;
 }
 
-// Numerical model ported from the web app; not a validated evacuation model.
 export function calculateSimulation(input, context) {
   const { scenario, zoneId, peopleCount, durationMinutes } = input;
   const sourceZone = context.zones.find((z) => z.id === zoneId);
 
-  // Determine destination candidates (excluding the source zone)
   const destinationCandidates = context.zones.filter((z) => z.id !== zoneId);
   let destinationZones;
   let distributionWeights;
 
   if (scenario === 'entrance_closure') {
-    // Redirection of arriving attendees to alternative entrances and parking/access points
     const primaryEntrances = destinationCandidates.filter((z) => z.type === 'entrance');
     const secondary = destinationCandidates.filter(
       (z) => z.type === 'exit' || z.name.toLowerCase().includes('parking'),
@@ -63,11 +60,6 @@ export function calculateSimulation(input, context) {
       return secondaryWeightTotal / secondaryCount;
     });
   } else {
-    // concert_end: attendees leaving the stage disperse to:
-    // 1. Exits and Parking (65%)
-    // 2. Hospitality / Food Court / Amenities (25%)
-    // 3. Other open stages (10%)
-    // Pure entrance gates (ingress) are NOT egress destinations!
     const exits = destinationCandidates.filter(
       (z) =>
         z.type === 'exit' ||
@@ -122,11 +114,9 @@ export function calculateSimulation(input, context) {
     });
   }
 
-  // Normalize weights
   const weightSum = distributionWeights.reduce((a, b) => a + b, 0) || 1;
   distributionWeights = distributionWeights.map((w) => w / weightSum);
 
-  // Calculate zone impacts
   const zoneResults = destinationZones.map((zone, idx) => {
     const weight = distributionWeights[idx];
     const addedPeople = Math.round(peopleCount * weight);
@@ -143,7 +133,6 @@ export function calculateSimulation(input, context) {
     };
   });
 
-  // Find the most impacted zone (prioritizing highest added increase from scenario)
   const mostImpacted = zoneResults.reduce((best, z) => {
     if (!best) return z;
     const zDelta = z.afterPercent - z.beforePercent;
@@ -156,7 +145,6 @@ export function calculateSimulation(input, context) {
   const maxBefore = mostImpacted?.beforePercent ?? 40;
   const maxAfter = mostImpacted?.afterPercent ?? 40;
 
-  // Build timeline (6 points from 0 to durationMinutes)
   const timeline = [];
   const steps = 5;
   for (let i = 0; i <= steps; i++) {
@@ -178,10 +166,8 @@ export function calculateSimulation(input, context) {
     timeline.push({ minute, occupancyPercent });
   }
 
-  // Determine peak occupancy
   const peakOccupancyPercent = Math.max(...timeline.map((p) => p.occupancyPercent), maxAfter);
 
-  // Zones at risk: only zones that reach >= 90% and experienced increased crowd from this scenario
   const zonesAtRisk = zoneResults.filter(
     (z) => z.afterPercent >= 90 && (z.afterPercent > z.beforePercent || z.addedPeople > 0),
   ).length;

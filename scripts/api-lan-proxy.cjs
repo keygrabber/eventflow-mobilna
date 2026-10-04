@@ -1,4 +1,3 @@
-// Local-network bridge: Laravel remains on 127.0.0.1:8000.
 const http = require('node:http');
 const os = require('node:os');
 const fs = require('node:fs');

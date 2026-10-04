@@ -7,7 +7,6 @@ const zone = (id, name, capacity, current_count, area) => ({
   alert_threshold: 90,
 });
 
-// Plan coordinates are local units (0..100), never geographic latitude/longitude.
 export const initialEventWorkspace = {
   version: 1,
   selectedEventId: 'demo-festival',

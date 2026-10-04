@@ -1,4 +1,3 @@
-// Static UI fixtures only. These values are not a crowd-flow calculation.
 export const simulationDemoContext = {
   mode: 'demo',
   event: { id: 'demo-festival', name: 'Festiwal demonstracyjny' },

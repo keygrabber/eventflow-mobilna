@@ -9,7 +9,6 @@ export const demoChecklist = [
   { id: 'zone_checked', label: 'Zweryfikowano stan strefy' },
   { id: 'actions_recorded', label: 'Odnotowano wykonane czynności' },
 ];
-// Fictional records. Never merge these IDs or resolutions into the live event store.
 export const demoAlerts = [
   {
     id: 'demo-alert-1',

@@ -1,4 +1,3 @@
-// Ported from eventflow-frontend/src/api/eventWorkspace.js.
 export const eventStatuses = { planned: 'Planowane', active: 'Aktywne', ended: 'Zakończone' };
 const number = (value) =>
   ['number', 'string'].includes(typeof value) &&

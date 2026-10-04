@@ -1,4 +1,3 @@
-// Shared report calculations ported from the web app.
 export function validateReportRange({ from, to }) {
   const errors = {};
   const valid = (value) => {
@@ -65,7 +64,6 @@ export function buildEventReport(event, histories, range) {
       Date.parse(a.logged_at) - Date.parse(b.logged_at) ||
       a.zone_name.localeCompare(b.zone_name, 'pl'),
   );
-  // Sum only simultaneous observations; missing zones are never inferred as empty.
   const timestamps = new Map();
   for (const sample of measurements) {
     const timestamp = Date.parse(sample.logged_at);
@@ -106,7 +104,6 @@ export function buildEventReport(event, histories, range) {
 
 function csvCell(value) {
   let text = value == null ? '' : String(value);
-  // Neutralize spreadsheet formulas in user-editable event/zone names.
   if (/^[\s]*[=+@-]/.test(text) || /^[\t\r\n]/.test(text)) text = `'${text}`;
   return `"${text.replaceAll('"', '""')}"`;
 }

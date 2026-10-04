@@ -1,20 +1,13 @@
-// Safely resolve platform & constants in React Native and Node.js test runners
 let PlatformOS = 'unknown';
 let ConstantsObj: any = null;
 try {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const rn = require('react-native');
   PlatformOS = rn.Platform?.OS ?? 'unknown';
-} catch {
-  // Pure Node environment
-}
+} catch {}
 try {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const expConst = require('expo-constants');
   ConstantsObj = expConst.default ?? expConst;
-} catch {
-  // Pure Node environment
-}
+} catch {}
 
 function getMetroHost(): string {
   if (!ConstantsObj) return '';
